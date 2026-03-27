@@ -1,6 +1,7 @@
 ﻿using HelsiPrototype.DTO;
 using HelsiPrototype.Interfaces;
 using HelsiPrototype.Model;
+using System.Xml.Linq;
 
 namespace HelsiPrototype.Services;
 
@@ -19,18 +20,21 @@ public class TaskListService : ITaskListService
         _taskRepository = taskRepository;
     }
 
-    public async Task<string> CreateAsync(TaskListAddObject taskListObject)
+    public async Task<string> CreateAsync(TaskListAddObject dto)
     {
-        User verifiedUser = await _userRepository.GetAsync(taskListObject.UserId);
+        if (dto.Name.Length > 255)
+            throw new Exception("Name is too long");
+
+        User verifiedUser = await _userRepository.GetAsync(dto.UserId);
         if (verifiedUser is null)
             throw new Exception("User not exist");
 
         TaskList taskList = new TaskList()
         {
-            Name = taskListObject.Name,
-            Description = taskListObject.Description,
-            OwnerId = taskListObject.UserId,
-            UserIdList = new List<string>() { taskListObject.UserId }
+            Name = dto.Name,
+            Description = dto.Description,
+            OwnerId = dto.UserId,
+            UserIdList = new List<string>() { dto.UserId }
         };
 
         await _repository.CreateAsync(taskList);
