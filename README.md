@@ -16,7 +16,9 @@ https://helsiprototype.azurewebsites.net/swagger/index.html
 Controller - Service - DAL(data access layer)
 
 TaskController -> interface <- TaskService -> interface <- MongoTaskRepository
+
 UserController -> interface <- UserService -> interface <- MongoUserRepository
+
 TaskListController -> interface <- TaskListService -> interface <- MongoTaskListRepository
 
 Дечого можливо не встиг (якщо вдруг не встигнуть перевірити, постараюсь доробити)
