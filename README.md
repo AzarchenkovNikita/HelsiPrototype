@@ -22,8 +22,9 @@ UserController -> interface <- UserService -> interface <- MongoUserRepository
 TaskListController -> interface <- TaskListService -> interface <- MongoTaskListRepository
 
 Дечого можливо не встиг (якщо вдруг не встигнуть перевірити, постараюсь доробити)
-перевести string id в Guid тип(через поспіх зробив string)
-можливо місцями неоптимальне оформлення коду і неймінги (dto великі назви)
+
+перевести string id в Guid тип(через поспіх зробив string),
+можливо місцями неоптимальне оформлення коду і неймінги (dto великі назви),
 додатковий функціонал для user і task
 
 але основна задача виконана, сподіваюсь все ок
