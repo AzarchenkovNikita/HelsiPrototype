@@ -1,6 +1,6 @@
 @HelsiPrototype_HostAddress = http://localhost:5103
 
-GET {{HelsiPrototype_HostAddress}}/weatherforecast/
+GET {{HelsiPrototype_HostAddress}}/swagger/
 Accept: application/json
 
 ###

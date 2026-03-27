@@ -50,36 +50,43 @@ public class TaskListController : ControllerBase
     public async Task<IActionResult> AssignTask([FromBody] TaskListLinkObject dto)
     {
         await _service.AssignTask(dto);
-        return Ok();
+        return Ok(new {
+            result = "success"
+        });
     }
 
     [HttpPost("unassigntask")]
     public async Task<IActionResult> UnassignTask([FromBody] TaskListLinkObject dto)
     {
         await _service.UnassignTask(dto);
-        return Ok();
+        return Ok(new {
+            result = "success"
+        });
     }
 
     [HttpPost("assignuser")]
     public async Task<IActionResult> AssignUser([FromBody] TaskListLinkObject dto)
     {
         await _service.AssignUser(dto);
-        return Ok();
+        return Ok(new {
+            result = "success"
+        });
     }
 
     [HttpPost("unassignuser")]
     public async Task<IActionResult> UnassignUser([FromBody] TaskListLinkObject dto)
     {
         await _service.UnassignUser(dto);
-        return Ok();
+        return Ok(new {
+            result = "success"
+        });
     }
 
     [HttpPost("delete")]
     public async Task<IActionResult> Delete([FromBody] TaskListObject dto)
     {
         await _service.DeleteAsync(dto);
-        return Ok(new
-        {
+        return Ok(new {
             result = "success"
         });
     }

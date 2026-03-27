@@ -28,7 +28,8 @@ public class TestController : ControllerBase
             return Ok(new
             {
                 status = "MongoDB OK",
-                response = result.ToString()
+                response = result.ToString(),
+                app_version = "v0.1.0"
             });
         } catch (Exception ex) {
             return StatusCode(500, ex.Message);

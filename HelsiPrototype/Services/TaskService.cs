@@ -30,6 +30,9 @@ public class TaskService : ITaskService
 
     public async Task<string> CreateAsync(TaskObject dto)
     {
+        if (dto.Name.Length > 255)
+            throw new Exception("Name is too long");
+
         TaskEntity newTask = new TaskEntity()
         {
             Name = dto.Name,

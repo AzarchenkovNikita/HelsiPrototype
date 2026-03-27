@@ -1,5 +1,6 @@
 ﻿using HelsiPrototype.DTO;
 using HelsiPrototype.Interfaces;
+using HelsiPrototype.Model;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HelsiPrototype.Controllers;
@@ -18,14 +19,14 @@ public class UserController : ControllerBase
     [HttpPost("create")]
     public async Task<IActionResult> Create([FromBody] UserObject dto)
     {
-        var userId = await _service.CreateAsync(dto.UserName);
+        string userId = await _service.CreateAsync(dto.UserName);
         return Ok(new { userId });
     }
 
     [HttpGet("getrange")]
     public async Task<IActionResult> GetRange()
     {
-        var result = await _service.GetRangeAsync();
-        return Ok(result);
+        List<User> userRange = await _service.GetRangeAsync();
+        return Ok(new { userRange });
     }
 }
