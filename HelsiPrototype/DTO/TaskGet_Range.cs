@@ -1,6 +1,6 @@
 ﻿namespace HelsiPrototype.DTO;
 
-public class TaskGetRangeObject
+public class TaskGet_Range
 {
     public int Skip { get; set; }
     public int Take { get; set; }

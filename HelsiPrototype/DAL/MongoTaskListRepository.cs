@@ -29,6 +29,26 @@ public class MongoTaskListRepository : ITaskListRepository
             throw new Exception("TaskList not found");
     }
 
+    public async Task UpdateRangeAsync(List<TaskList> taskLists)
+    {
+        if (taskLists == null || taskLists.Count == 0)
+            return;
+
+        var models = taskLists.Select(taskList =>
+            new ReplaceOneModel<TaskList>(
+                Builders<TaskList>.Filter.Eq(x => x.Id, taskList.Id),
+                taskList)
+            {
+                IsUpsert = false
+            }
+        ).ToList();
+
+        var result = await _collection.BulkWriteAsync(models);
+
+        if (result.MatchedCount != taskLists.Count)
+            throw new Exception("Some TaskLists were not found");
+    }
+
     public async Task DeleteAsync(string id)
     {
         var result = await _collection.DeleteOneAsync(x => x.Id == id);
@@ -61,5 +81,14 @@ public class MongoTaskListRepository : ITaskListRepository
             .Skip(skip)
             .Limit(take)
             .ToListAsync();
+    }
+
+    public async Task<List<TaskList>> GetRangeAsync(string taskId)
+    {
+        var filter = Builders<TaskList>.Filter.Or(
+            Builders<TaskList>.Filter.AnyEq(x => x.TaskIdList, taskId)
+        );
+
+        return await _collection.Find(filter).ToListAsync();
     }
 }

@@ -7,15 +7,18 @@ namespace HelsiPrototype.Services;
 public class TaskService : ITaskService
 {
     private readonly ITaskRepository _repository;
+    private readonly ITaskListRepository _taskListRepository;
 
-    public TaskService(ITaskRepository repository)
+    public TaskService(ITaskRepository repository, 
+        ITaskListRepository taskListRepository)
     {
         _repository = repository;
+        _taskListRepository = taskListRepository;
     }
 
-    public async Task<List<TaskEntity>> GetRangeAsync(TaskGetRangeObject dto)
+    public async Task<List<TaskEntity>> GetRangeAsync(TaskGet_Range dto)
     {
-        return await _repository.GetList(dto.Skip, dto.Take, dto.OrderByDesc);
+        return await _repository.GetRangeAsync(dto.Skip, dto.Take, dto.OrderByDesc);
     }
 
     public async Task<TaskEntity> GetAsync(string id)
@@ -28,21 +31,28 @@ public class TaskService : ITaskService
         return task;
     }
 
-    public async Task<string> CreateAsync(TaskObject dto)
+    //оскільки сервіс може бути реюзабельним, для зручності створено перевантаження
+    public async Task<string> CreateAsync(Task_Add dto)
     {
-        if (dto.Name.Length > 255)
+        return await CreateAsync(dto.Name, dto.Description, dto.UserId);
+    }
+
+    public async Task<string> CreateAsync(string _Name, string _Description, string _OwnerId)
+    {
+        if (_Name.Length > 255)
             throw new Exception("Name is too long");
 
         TaskEntity newTask = new TaskEntity()
         {
-            Name = dto.Name,
-            Description = dto.Description
+            Name = _Name,
+            Description = _Description,
+            OwnerId = _OwnerId
         };
         await _repository.CreateAsync(newTask);
         return newTask.Id;
     }
 
-    public async Task UpdateAsync(TaskUpdObject dto)
+    public async Task UpdateAsync(Task_Upd dto)
     {
         TaskEntity existing = await _repository.GetAsync(dto.TaskId);
 
@@ -60,6 +70,10 @@ public class TaskService : ITaskService
 
         if (existing == null)
             throw new Exception("Task not found");
+
+        List<TaskList> taskListRange = await _taskListRepository.GetRangeAsync(id);
+        taskListRange.ForEach(x => x.TaskIdList.Remove(id));
+        await _taskListRepository.UpdateRangeAsync(taskListRange);
 
         await _repository.DeleteAsync(id);
     }

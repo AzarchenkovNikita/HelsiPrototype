@@ -29,7 +29,7 @@ public class TestController : ControllerBase
             {
                 status = "MongoDB OK",
                 response = result.ToString(),
-                app_version = "v0.1.0"
+                app_version = "v0.1.1"
             });
         } catch (Exception ex) {
             return StatusCode(500, ex.Message);

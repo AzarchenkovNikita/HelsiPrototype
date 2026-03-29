@@ -1,6 +1,6 @@
 ﻿namespace HelsiPrototype.DTO;
 
-public class UserObject
+public class User_Add
 {
     public string UserName { get; set; }
 }

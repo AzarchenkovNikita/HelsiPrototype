@@ -10,17 +10,20 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 
+//рівень доступу до данних
 builder.Services.AddSingleton<MongoDbContext>();
 builder.Services.AddSingleton<ITaskRepository, MongoTaskRepository>();
 builder.Services.AddSingleton<IUserRepository, MongoUserRepository>();
 builder.Services.AddSingleton<ITaskListRepository, MongoTaskListRepository>();
 
+//рівень сервісів
 builder.Services.AddTransient<ITaskService, TaskService>();
 builder.Services.AddTransient<IUserService, UserService>();
 builder.Services.AddTransient<ITaskListService, TaskListService>();
 
-builder.Services.Configure<MongoDbSettings>(
-    builder.Configuration.GetSection("MongoDbSettings"));
+//mongodb
+builder.Services.Configure<MongoDbSettings>
+    (builder.Configuration.GetSection("MongoDbSettings"));
 
 builder.Services.AddSingleton<IMongoClient>(sp =>
 {
@@ -33,13 +36,12 @@ builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
+//мідлвейр створює rest відповіді регресивних кейсів бізнес логіки
 app.UseMiddleware<ExceptionMiddleware>();
 
 app.UseSwagger();
 app.UseSwaggerUI();
-
 app.UseHttpsRedirection();
 app.UseAuthorization();
 app.MapControllers();
-
 app.Run();

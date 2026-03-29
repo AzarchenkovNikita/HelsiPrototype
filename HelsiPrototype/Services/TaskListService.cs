@@ -1,7 +1,6 @@
 ﻿using HelsiPrototype.DTO;
 using HelsiPrototype.Interfaces;
 using HelsiPrototype.Model;
-using System.Xml.Linq;
 
 namespace HelsiPrototype.Services;
 
@@ -11,16 +10,21 @@ public class TaskListService : ITaskListService
     private readonly IUserRepository _userRepository;
     private readonly ITaskRepository _taskRepository;
 
+    private readonly ITaskService _taskService;
+
     public TaskListService(ITaskListRepository repository, 
         IUserRepository userRepository, 
-        ITaskRepository taskRepository)
+        ITaskRepository taskRepository,
+        ITaskService taskService)
     {
         _repository = repository;
         _userRepository = userRepository;
         _taskRepository = taskRepository;
+
+        _taskService = taskService;
     }
 
-    public async Task<string> CreateAsync(TaskListAddObject dto)
+    public async Task<string> CreateAsync(TaskList_Add dto)
     {
         if (dto.Name.Length > 255)
             throw new Exception("Name is too long");
@@ -42,7 +46,7 @@ public class TaskListService : ITaskListService
         return taskList.Id;
     }
 
-    public async Task UpdateAsync(TaskListUpdObject dto)
+    public async Task UpdateAsync(TaskList_Upd dto)
     {
         var taskList = await GetAndCheckAccess(dto.TaskListId, dto.UserId);
         taskList.Name = dto.NewName;
@@ -50,7 +54,25 @@ public class TaskListService : ITaskListService
         await _repository.UpdateAsync(taskList);
     }
 
-    public async Task AssignTask(TaskListLinkObject dto)
+    // юзер може створити задачу і одразу додати її в список задач, якщо потрібно
+    // використовуючи один атомарний сервіс
+    public async Task<string> CreateTaskAsync(TaskList_CreateTask dto)
+    {
+        var taskList = await GetAndCheckAccess(dto.TaskListId, dto.UserId);
+
+        if (!taskList.UserIdList.Contains(dto.UserId))
+            throw new Exception("Task owner is not a member of the task list, " +
+                "please assign him first");
+
+        string taskId = await _taskService.CreateAsync(dto.Name, dto.Description, dto.UserId);
+        taskList.TaskIdList.Add(taskId);
+        await _repository.UpdateAsync(taskList);
+
+        return taskId;
+    }
+
+    // юзер може приєднати існуючу задачу
+    public async Task AssignTask(TaskList_Link dto)
     {
         var taskList = await GetAndCheckAccess(dto.TaskListId, dto.UserId);
 
@@ -61,11 +83,15 @@ public class TaskListService : ITaskListService
         if (taskToAssign is null)
             throw new Exception("Task to assign not exist");
 
+        if (!taskList.UserIdList.Contains(taskToAssign.OwnerId))
+            throw new Exception("Task owner is not a member of the task list, " +
+                "please assign him first");
+
         taskList.TaskIdList.Add(dto.EntityId);
         await _repository.UpdateAsync(taskList);
     }
 
-    public async Task UnassignTask(TaskListLinkObject dto)
+    public async Task UnassignTask(TaskList_Link dto)
     {
         var taskList = await GetAndCheckAccess(dto.TaskListId, dto.UserId);
 
@@ -73,7 +99,7 @@ public class TaskListService : ITaskListService
         await _repository.UpdateAsync(taskList);
     }
 
-    public async Task AssignUser(TaskListLinkObject dto)
+    public async Task AssignUser(TaskList_Link dto)
     {
         var taskList = await GetAndCheckAccess(dto.TaskListId, dto.UserId);
 
@@ -88,10 +114,12 @@ public class TaskListService : ITaskListService
         await _repository.UpdateAsync(taskList);
     }
 
-    public async Task UnassignUser(TaskListLinkObject dto)
+    public async Task UnassignUser(TaskList_Link dto)
     {
         var taskList = await GetAndCheckAccess(dto.TaskListId, dto.UserId);
 
+        // овнер не може бути видалений зі списку учасників
+        // це нівелює потребу звернення до OwnerId в кожному методі
         if (taskList.OwnerId.Equals(dto.EntityId))
             throw new Exception("Owner can't be unassigned");
 
@@ -99,7 +127,7 @@ public class TaskListService : ITaskListService
         await _repository.UpdateAsync(taskList);
     }
 
-    public async Task DeleteAsync(TaskListObject dto)
+    public async Task DeleteAsync(TaskList_ dto)
     {
         var taskList = await GetAndCheckAccess(dto.TaskListId, dto.UserId);
         if (!taskList.OwnerId.Equals(dto.UserId))
@@ -108,7 +136,8 @@ public class TaskListService : ITaskListService
         await _repository.DeleteAsync(taskList.Id);
     }
 
-    public async Task<TaskListResponse> GetAsync(TaskListObject dto)
+    // тут також присутня інформація по звязках із юзерами
+    public async Task<TaskList_Response> GetAsync(TaskList_ dto)
     {
         TaskList taskList = await GetAndCheckAccess(dto.TaskListId, dto.UserId);
         
@@ -121,7 +150,7 @@ public class TaskListService : ITaskListService
         };
     }
 
-    public async Task<List<TaskList>> GetRangeAsync(TaskListGetRangeObject dto)
+    public async Task<List<TaskList>> GetRangeAsync(TaskList_GetRange dto)
     {
         return await _repository.GetRangeAsync(dto.UserId, dto.Skip, dto.Take, dto.OrderByDesc);
     }

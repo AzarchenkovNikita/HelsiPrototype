@@ -5,13 +5,14 @@ namespace HelsiPrototype.Interfaces;
 
 public interface ITaskListService
 {
-    Task<string> CreateAsync(TaskListAddObject taskListObject);
-    Task UpdateAsync(TaskListUpdObject taskListUpdObject);
-    Task AssignTask(TaskListLinkObject dto);
-    Task UnassignTask(TaskListLinkObject dto);
-    Task AssignUser(TaskListLinkObject dto);
-    Task UnassignUser(TaskListLinkObject dto);
-    Task DeleteAsync(TaskListObject taskListDeleteObject);
-    Task<TaskListResponse> GetAsync(TaskListObject dto);
-    Task<List<TaskList>> GetRangeAsync(TaskListGetRangeObject dto);
+    Task<string> CreateAsync(TaskList_Add dto);
+    Task UpdateAsync(TaskList_Upd dto);
+    Task<string> CreateTaskAsync(TaskList_CreateTask dto);
+    Task AssignTask(TaskList_Link dto);
+    Task UnassignTask(TaskList_Link dto);
+    Task AssignUser(TaskList_Link dto);
+    Task UnassignUser(TaskList_Link dto);
+    Task DeleteAsync(TaskList_ dto);
+    Task<TaskList_Response> GetAsync(TaskList_ dto);
+    Task<List<TaskList>> GetRangeAsync(TaskList_GetRange dto);
 }

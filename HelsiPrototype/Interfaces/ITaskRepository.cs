@@ -4,10 +4,9 @@ namespace HelsiPrototype.Interfaces;
 
 public interface ITaskRepository
 {
-    Task<List<TaskEntity>> GetList(int skip, int take, bool orderByDescending);
     Task<TaskEntity> GetAsync(string id);
-
-    Task<List<TaskEntity>> GetRangeAsync(List<string> ids);
+    Task<List<TaskEntity>> GetRangeAsync(int skip, int take, bool orderByDescending);
+    Task<List<TaskEntity>> GetRangeAsync(List<string> idRange);
 
     Task CreateAsync(TaskEntity task);
 
