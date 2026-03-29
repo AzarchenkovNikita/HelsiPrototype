@@ -15,7 +15,7 @@ public class TaskController : ControllerBase
     }
 
     [HttpPost("getrange")]
-    public async Task<IActionResult> GetRange([FromBody] TaskGetRangeObject dto)
+    public async Task<IActionResult> GetRange([FromBody] TaskGet_Range dto)
     {
         List<TaskEntity> taskRange = await _service.GetRangeAsync(dto);
         return Ok(new { taskRange });
@@ -29,14 +29,14 @@ public class TaskController : ControllerBase
     }
 
     [HttpPost("create")]
-    public async Task<IActionResult> Create([FromBody] TaskObject dto)
+    public async Task<IActionResult> Create([FromBody] Task_Add dto)
     {
         string taskId = await _service.CreateAsync(dto);
         return Ok(new { taskId });
     }
 
     [HttpPost("update")]
-    public async Task<IActionResult> Update([FromBody] TaskUpdObject dto)
+    public async Task<IActionResult> Update([FromBody] Task_Upd dto)
     {
         await _service.UpdateAsync(dto);
         return Ok(new {

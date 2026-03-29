@@ -17,28 +17,28 @@ public class TaskListController : ControllerBase
     }
 
     [HttpPost("create")]
-    public async Task<IActionResult> Create([FromBody] TaskListAddObject dto)
+    public async Task<IActionResult> Create([FromBody] TaskList_Add dto)
     {
-        string taskId = await _service.CreateAsync(dto);
-        return Ok(new { taskId });
+        string taskListId = await _service.CreateAsync(dto);
+        return Ok(new { taskListId });
     }
 
     [HttpPost("get")]
-    public async Task<IActionResult> Get([FromBody] TaskListObject dto)
+    public async Task<IActionResult> Get([FromBody] TaskList_ dto)
     {
-        TaskListResponse response = await _service.GetAsync(dto);
+        TaskList_Response response = await _service.GetAsync(dto);
         return Ok(new { response });
     }
 
     [HttpPost("getrange")]
-    public async Task<IActionResult> GetRange([FromBody] TaskListGetRangeObject dto)
+    public async Task<IActionResult> GetRange([FromBody] TaskList_GetRange dto)
     {
         List<TaskList> taskListRange = await _service.GetRangeAsync(dto);
         return Ok(new { taskListRange });
     }
 
     [HttpPost("update")]
-    public async Task<IActionResult> Update([FromBody] TaskListUpdObject dto)
+    public async Task<IActionResult> Update([FromBody] TaskList_Upd dto)
     {
         await _service.UpdateAsync(dto);
         return Ok(new { 
@@ -46,8 +46,15 @@ public class TaskListController : ControllerBase
         });
     }
 
+    [HttpPost("createtask")]
+    public async Task<IActionResult> CreateTask([FromBody] TaskList_CreateTask dto)
+    {
+        string taskId = await _service.CreateTaskAsync(dto);
+        return Ok(new { taskId });
+    }
+
     [HttpPost("assigntask")]
-    public async Task<IActionResult> AssignTask([FromBody] TaskListLinkObject dto)
+    public async Task<IActionResult> AssignTask([FromBody] TaskList_Link dto)
     {
         await _service.AssignTask(dto);
         return Ok(new {
@@ -56,7 +63,7 @@ public class TaskListController : ControllerBase
     }
 
     [HttpPost("unassigntask")]
-    public async Task<IActionResult> UnassignTask([FromBody] TaskListLinkObject dto)
+    public async Task<IActionResult> UnassignTask([FromBody] TaskList_Link dto)
     {
         await _service.UnassignTask(dto);
         return Ok(new {
@@ -65,7 +72,7 @@ public class TaskListController : ControllerBase
     }
 
     [HttpPost("assignuser")]
-    public async Task<IActionResult> AssignUser([FromBody] TaskListLinkObject dto)
+    public async Task<IActionResult> AssignUser([FromBody] TaskList_Link dto)
     {
         await _service.AssignUser(dto);
         return Ok(new {
@@ -74,7 +81,7 @@ public class TaskListController : ControllerBase
     }
 
     [HttpPost("unassignuser")]
-    public async Task<IActionResult> UnassignUser([FromBody] TaskListLinkObject dto)
+    public async Task<IActionResult> UnassignUser([FromBody] TaskList_Link dto)
     {
         await _service.UnassignUser(dto);
         return Ok(new {
@@ -83,7 +90,7 @@ public class TaskListController : ControllerBase
     }
 
     [HttpPost("delete")]
-    public async Task<IActionResult> Delete([FromBody] TaskListObject dto)
+    public async Task<IActionResult> Delete([FromBody] TaskList_ dto)
     {
         await _service.DeleteAsync(dto);
         return Ok(new {

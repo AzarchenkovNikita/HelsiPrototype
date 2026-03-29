@@ -18,14 +18,14 @@ public class MongoTaskRepository : ITaskRepository
         return await _collection.Find(x => x.Id == id).FirstOrDefaultAsync();
     }
 
-    public async Task<List<TaskEntity>> GetRangeAsync(List<string> ids)
+    public async Task<List<TaskEntity>> GetRangeAsync(List<string> idRange)
     {
         return await _collection
-            .Find(x => ids.Contains(x.Id))
+            .Find(x => idRange.Contains(x.Id))
             .ToListAsync();
     }
 
-    public async Task<List<TaskEntity>> GetList(int skip, int take, bool orderByDescending)
+    public async Task<List<TaskEntity>> GetRangeAsync(int skip, int take, bool orderByDescending)
     {
         var query = _collection.Find(_ => true);
 

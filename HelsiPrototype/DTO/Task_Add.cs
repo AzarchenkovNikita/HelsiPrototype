@@ -1,8 +1,8 @@
 ﻿namespace HelsiPrototype.DTO;
 
-public class TaskUpdObject
+public class Task_Add
 {
-    public string TaskId { get; set; }
+    public string UserId { get; set; }
     public string Name { get; set; }
     public string Description { get; set; }
 }
